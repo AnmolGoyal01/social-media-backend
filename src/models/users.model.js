@@ -42,7 +42,7 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
-    private: {
+    privateAccount: {
       type: Boolean,
       default : false
     },
