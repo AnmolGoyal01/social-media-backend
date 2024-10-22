@@ -42,6 +42,10 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    private: {
+      type: Boolean,
+      default : false
+    },
   },
   { timestamps: true }
 );
