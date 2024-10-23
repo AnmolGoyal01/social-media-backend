@@ -255,6 +255,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   if (!username) {
     throw new ApiError(400, "username not available");
   }
+  const { page = 1, limit = 10 } = req.query;
 
   const user = await User.findOne({
     username: username.toLowerCase().replace(/\s+/g, ""),
@@ -334,15 +335,34 @@ const getUserProfile = asyncHandler(async (req, res) => {
   ];
 
   if (isFollowing || !isPrivateAccount) {
-    aggregationPipelines[5].$project.posts = 1;
+    aggregationPipelines[5].$project.posts = {
+      $slice: [
+        "$posts",
+        (page - 1) * limit, // Skip posts for pagination
+        parseInt(limit), // Limit number of posts returned
+      ],
+    };
   }
-  const resultUser = await User.aggregate(aggregationPipelines);
-  if (!resultUser?.length) {
-    throw new ApiError(400, "error fetching user profile");
+  const options = {
+    page: parseInt(page),
+    limit: parseInt(limit),
+  };
+
+  // Paginate using the aggregate paginate plugin
+  const resultUser = await User.aggregatePaginate(
+    User.aggregate(aggregationPipelines),
+    options
+  );
+
+  if (!resultUser?.docs?.length) {
+    throw new ApiError(400, "Error fetching user profile");
   }
+
   return res
     .status(200)
-    .json(new ApiResponse(200, resultUser[0], "user fetched sucessfully"));
+    .json(
+      new ApiResponse(200, resultUser.docs[0], "User fetched successfully")
+    );
 });
 const togglePrivate = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
