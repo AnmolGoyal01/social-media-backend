@@ -20,9 +20,13 @@ app.use(cookieParser());
 // routes import
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import userRouter from "./routes/user.routes.js";
+import postRouter from "./routes/post.routes.js";
+import followingRouter from "./routes/following.routes.js";
 
 // routes declaration
 app.use(`${API_VERSION}/healthCheck`, healthCheckRouter);
 app.use(`${API_VERSION}/users`, userRouter);
+app.use(`${API_VERSION}/posts`, postRouter);
+app.use(`${API_VERSION}/follow-relationships`, followingRouter);
 
 export { app };
