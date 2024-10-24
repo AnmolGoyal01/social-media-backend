@@ -12,6 +12,7 @@ import {
   updateFullName,
   updateUsername,
   getUserProfile,
+  getFeed,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -33,5 +34,6 @@ router.route("/bio").patch(verifyJwt, updateBio);
 router.route("/fullName").patch(verifyJwt, updateFullName);
 router.route("/username").patch(verifyJwt, updateUsername);
 router.route("/u/:username").get(verifyJwt, getUserProfile);
+router.route("/feed").get(verifyJwt, getFeed);
 
 export default router;

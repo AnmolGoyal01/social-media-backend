@@ -3,7 +3,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/users.model.js";
 import { Following } from "../models/followings.model.js";
+import { Post } from "../models/posts.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -44,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  if (!avatar) {
+  if (!avatar?.url) {
     console.log("unable to upload avatar");
     // throw new ApiError(400, "unable to upload avatar")
   }
@@ -303,6 +305,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
         localField: "_id",
         foreignField: "owner",
         as: "posts",
+        pipeline: [
+          { $sort: { createdAt: -1 } }, // Sort posts by most recent first
+        ],
       },
     },
     {
@@ -363,6 +368,114 @@ const getUserProfile = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(200, resultUser.docs[0], "User fetched successfully")
     );
+});
+const getFeed = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const { page = 1, limit = 10 } = req.query;
+
+  const feedPosts = await Post.aggregate([
+    {
+      $lookup: {
+        from: "followings",
+        localField: "owner",
+        foreignField: "followedTo",
+        as: "isFollowing",
+        pipeline: [
+          {
+            $match: {
+              follower: new mongoose.Types.ObjectId(userId),
+            },
+          },
+        ],
+      },
+    },
+    {
+      $match: {
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+        pipeline: [
+          {
+            $project: {
+              username: 1,
+              fullName: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$ownerDetails",
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "likedPost",
+        as: "likes",
+      },
+    },
+    {
+      $lookup: {
+        from: "saves",
+        localField: "_id",
+        foreignField: "savedPost",
+        as: "saves",
+      },
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "commentedPost",
+        as: "comments",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: { $size: "$likes" },
+        commentsCount: { $size: "$comments" },
+        isLiked: { $in: [userId, "$likes.likedBy"] },
+        isSaved: { $in: [userId, "$saves.savedBy"] },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        caption: 1,
+        image: 1,
+        createdAt: 1, // Include the post's creation date
+        likesCount: 1,
+        commentsCount: 1,
+        isLiked: 1,
+        isSaved: 1,
+        ownerDetails: 1,
+      },
+    },
+    {
+      $sort: { createdAt: -1 }, // Sort by most recent posts first
+    },
+    {
+      $skip: (page - 1) * limit, // Pagination
+    },
+    {
+      $limit: parseInt(limit), // Limit results to 'limit'
+    },
+  ]);
+
+  if (!feedPosts?.length) {
+    throw new ApiError(404, "No feed posts found");
+  }
+  res
+    .status(200)
+    .json(new ApiResponse(200, feedPosts, "Feed fetched successfully"));
 });
 const togglePrivate = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
@@ -463,4 +576,5 @@ export {
   updateFullName,
   updateUsername,
   getUserProfile,
+  getFeed,
 };
