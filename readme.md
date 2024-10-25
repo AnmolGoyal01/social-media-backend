@@ -51,8 +51,10 @@ src
 ├── models               # Mongoose models for User, Post, etc.
 ├── routes               # Express routes for each resource
 ├── utils                # Utilities and helpers
+├── db                   # Database connection and setup configurations
 ├── app.js               # Express app setup and configuration
-└── index.js            # Server startup file
+├── constants.js         # Application-wide constantsconfiguration
+└── index.js             # Entry point to start the server
 ```
 ## Setup & Installation
 
