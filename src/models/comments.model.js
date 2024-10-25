@@ -13,7 +13,7 @@ const commentSchema = new Schema(
     },
     comment: {
       type: String,
-      required: [True, "comment can not be empty"],
+      required: [true, "comment can not be empty"],
     },
   },
   { timestamps: true }

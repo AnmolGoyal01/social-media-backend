@@ -3,11 +3,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Post } from "../models/posts.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import { Following } from "../models/followings.model";
-import { User } from "../models/users.model";
 import { Like } from "../models/likes.model.js";
-import { Comment } from "../models/comments.model";
-import { Save } from "../models/saved.model";
+import { Comment } from "../models/comments.model.js";
+import { Save } from "../models/saved.model.js";
 import mongoose from "mongoose";
 
 // Create a new Post

@@ -1,8 +1,7 @@
-import ApiError from "../utils/ApiError.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import asyncHandler from "../middlewares/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { Like } from "../models/likes.model.js";
-import { Post } from "../models/posts.model.js";
 import mongoose from "mongoose";
 
 // Toggle like on a post
