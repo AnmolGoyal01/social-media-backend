@@ -23,7 +23,8 @@ import userRouter from "./routes/user.routes.js";
 import postRouter from "./routes/post.routes.js";
 import followingRouter from "./routes/following.routes.js";
 import commentRouter from "./routes/comment.routes.js";
-import savePost from "./routes/savePost.routes.js";
+import savePostRouter from "./routes/savePost.routes.js";
+import likeRouter from "./routes/like.routes.js";
 
 // routes declaration
 app.use(`${API_VERSION}/healthCheck`, healthCheckRouter);
@@ -31,6 +32,7 @@ app.use(`${API_VERSION}/users`, userRouter);
 app.use(`${API_VERSION}/posts`, postRouter);
 app.use(`${API_VERSION}/follow-relationships`, followingRouter);
 app.use(`${API_VERSION}/comments`, commentRouter);
-app.use(`${API_VERSION}/save`, savePost);
+app.use(`${API_VERSION}/save`, savePostRouter);
+app.use(`${API_VERSION}/likes`, likeRouter);
 
 export { app };
