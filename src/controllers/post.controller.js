@@ -66,7 +66,7 @@ const getPostById = asyncHandler(async (req, res) => {
         ],
       },
     },
-    // { $unwind: "$ownerDetails" }, // Unwind the owner details array
+    { $unwind: "$ownerDetails" }, // Unwind the owner details array
     {
       $lookup: {
         from: "likes",
@@ -101,9 +101,6 @@ const getPostById = asyncHandler(async (req, res) => {
         isSaved: {
           $in: [userId, "$saves.savedBy"], // Check if the user has saved the post
         },
-        owner: {
-          $first: "$owner",
-        },
       },
     },
     {
@@ -115,7 +112,7 @@ const getPostById = asyncHandler(async (req, res) => {
         likesCount: 1,
         isLiked: 1,
         isSaved: 1,
-        owner: 1,
+        ownerDetails :1,
         commentsCount: 1,
       },
     },
