@@ -6,10 +6,11 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const canViewPost = asyncHandler(async (req, res, next) => {
   const { id } = req.params; // post ID
 
-  const post = await Post.findById(id).populate(
-    "owner",
-    "username privateAccount fullName avatar"
-  );
+  // const post = await Post.findById(id).populate(
+  //   "owner",
+  //   "username privateAccount fullName avatar"
+  // );
+  const post = await Post.findById(id);
 
   if (!post) {
     throw new ApiError(404, "Post not found");
