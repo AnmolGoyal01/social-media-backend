@@ -309,6 +309,10 @@ const deletePost = asyncHandler(async (req, res) => {
 // Like/Unlike a post
 const toggleLikePost = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const post = await Post.findById(id);
+  if (!post) {
+    throw new ApiError(404, "post not found");
+  }
   const alreadyLiked = await Like.findOne({
     likedBy: req.user?._id,
     likedPost: req.post?._id,
