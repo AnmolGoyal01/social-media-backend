@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const userSchema = new Schema(
   {
@@ -44,7 +45,7 @@ const userSchema = new Schema(
     },
     privateAccount: {
       type: Boolean,
-      default : false
+      default: false,
     },
   },
   { timestamps: true }
@@ -83,5 +84,6 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 };
+userSchema.plugin(mongooseAggregatePaginate);
 
 export const User = model("User", userSchema);

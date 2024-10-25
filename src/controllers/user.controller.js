@@ -80,7 +80,6 @@ const loginUser = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid email format");
     }
   }
-  q;
   if (!password) {
     throw new ApiError(400, "password is required");
   }
@@ -252,7 +251,6 @@ const updateAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Avatar updated Sucessfully"));
 });
 const getUserProfile = asyncHandler(async (req, res) => {
-  // todo return user followers, followings, number of posts, posts(use pagination if possible),
   const { username } = req.params;
   if (!username) {
     throw new ApiError(400, "username not available");
@@ -517,7 +515,7 @@ const updateBio = asyncHandler(async (req, res) => {
 const updateFullName = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   if (!fullName) {
-    throw new ApiError(500, "fullName can not be empty!");
+    throw new ApiError(401, "fullName can not be empty!");
   }
   const user = await User.findByIdAndUpdate(
     req.user?._id,
