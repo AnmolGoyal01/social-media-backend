@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 // Add Comment
 const addComment = asyncHandler(async (req, res) => {
-  const { postId } = req.params;
+  const { id: postId } = req.params;
   const { comment } = req.body;
 
   if (!comment) {
@@ -26,7 +26,7 @@ const addComment = asyncHandler(async (req, res) => {
 });
 // Get All Comments for a Post with Pagination
 const getComments = asyncHandler(async (req, res) => {
-  const { postId } = req.params;
+  const { id: postId } = req.params;
   const { page = 1, limit = 10 } = req.query;
 
   // Aggregate comments for the post with pagination
