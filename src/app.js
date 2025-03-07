@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { API_VERSION } from "./constants.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 
@@ -34,5 +35,7 @@ app.use(`${API_VERSION}/follow-relationships`, followingRouter);
 app.use(`${API_VERSION}/comments`, commentRouter);
 app.use(`${API_VERSION}/save`, savePostRouter);
 app.use(`${API_VERSION}/likes`, likeRouter);
+
+app.use(errorHandler);
 
 export { app };
